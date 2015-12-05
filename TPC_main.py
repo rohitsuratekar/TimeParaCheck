@@ -7,13 +7,13 @@
 #Initial Imports
 import TPC_functions
 import TPC_settings as tset
-import math, datetime
+import math, datetime, itertools
 import numpy as np
 from scipy.integrate import odeint
 import matplotlib
 matplotlib.use('TkAgg') #For interactive plots
 import matplotlib.pyplot as plt
-time_stamp = datetime.datetime.now().strftime("%y%m%d%I%M%S") #Year,Month,Date,Hour,Minute,Seconds
+
 
 pmpi = 21.49
 pi4p = 17.00
@@ -25,30 +25,38 @@ cdpdag = 1.11
 erpi = 318.63
 
 initial_conditions = [pmpi, pi4p, pip2, dag, pmpa, erpa, cdpdag, erpi] #Concentration vector
-A, B, C, D, E = 0.07, 0.1, 0.1, 0.1, 1
-alpha, beta, gamma, delta, epsilon = 0.05, 0.05, 0.008, 0.167, 0.001
-plc = 0.078
-parameters = [plc, A, B, C, D, E, alpha, beta, gamma, delta, epsilon]  #Parameter vector
-time = np.linspace(0,tset.time_period,tset.time_integration_points)  #Time grid
 
-steady_state_concentration = odeint( TPC_functions.generalODE , initial_conditions, time , args=(parameters,))
+for i in itertools.product(tset.A_range, tset.B_range, tset.C_range, tset.D_range, tset.E_range):
 
-pre_analysis_concentrations = steady_state_concentration[-1] #Recoreded steady states
-#PIP2 depletion during light stimulation
-ss_pip2 = pre_analysis_concentrations[2]
-depleted_pip2 = (ss_pip2*tset.percentage_depletion)/100.0
-new_dag = pre_analysis_concentrations[3] + ss_pip2 - depleted_pip2
-#Updating PIP2 and DAG values
-pre_analysis_concentrations[2] = depleted_pip2
-pre_analysis_concentrations[3] = new_dag
+    A, B, C, D, E = i
+    alpha, beta, gamma, delta, epsilon = 0.05, 0.05, 0.008, 0.167, 0.001
+    plc = 0.078
 
-recovery_profile = odeint( TPC_functions.generalODE , pre_analysis_concentrations, time , args=(parameters,))
+    if (alpha < A) and ((alpha/delta) < E):   #It will scan only parameters with positive concentrations
 
-desired_pip2_concentration_index =  np.argmax(recovery_profile[:,2]> ((tset.recovery_time_to_monitor*ss_pip2)/100.0))
-percentage_recovery_time = time[desired_pip2_concentration_index]
+        parameters = [plc, A, B, C, D, E, alpha, beta, gamma, delta, epsilon]  #Parameter vector
+        time = np.linspace(0,tset.time_period,tset.time_integration_points)  #Time grid
 
-final_list = [ss_pip2]+[tset.percentage_depletion]+[percentage_recovery_time] + parameters
-str_conversion = [ float(round(elem,3)) for elem in final_list ]
-str_para = '\t'.join(str(k1) for k1 in str_conversion)
+        steady_state_concentration = odeint( TPC_functions.generalODE , initial_conditions, time , args=(parameters,))
 
-print "%s\t%s"%(time_stamp,str_para)
+        pre_analysis_concentrations = steady_state_concentration[-1] #Recoreded steady states
+        #PIP2 depletion during light stimulation
+        ss_pip2 = pre_analysis_concentrations[2]
+        depleted_pip2 = (ss_pip2*tset.percentage_depletion)/100.0
+        new_dag = pre_analysis_concentrations[3] + ss_pip2 - depleted_pip2
+        #Updating PIP2 and DAG values
+        pre_analysis_concentrations[2] = depleted_pip2
+        pre_analysis_concentrations[3] = new_dag
+
+        recovery_profile = odeint( TPC_functions.generalODE , pre_analysis_concentrations, time , args=(parameters,))
+
+        desired_pip2_concentration_index =  np.argmax(recovery_profile[:,2]> ((tset.recovery_time_to_monitor*ss_pip2)/100.0))
+        percentage_recovery_time = time[desired_pip2_concentration_index]
+
+        time_stamp = datetime.datetime.now().strftime("%y%m%d%I%M%S") #Year,Month,Date,Hour,Minute,Seconds
+
+        final_list = [ss_pip2]+[tset.percentage_depletion]+[percentage_recovery_time] + parameters
+        str_conversion = [ float(round(elem,3)) for elem in final_list ]
+        str_para = '\t'.join(str(k1) for k1 in str_conversion)
+
+        print "%s\t%s"%(time_stamp,str_para)
