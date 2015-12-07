@@ -14,6 +14,7 @@ import matplotlib
 matplotlib.use('TkAgg') #For interactive plots
 import matplotlib.pyplot as plt
 
+filename = "%s_Time_Para.txt"%(datetime.datetime.now().strftime("%y%m%d%I%M%S"))
 
 pmpi = 21.49
 pi4p = 17.00
@@ -59,4 +60,9 @@ for i in itertools.product(tset.A_range, tset.B_range, tset.C_range, tset.D_rang
         str_conversion = [ float(round(elem,3)) for elem in final_list ]
         str_para = '\t'.join(str(k1) for k1 in str_conversion)
 
-        print "%s\t%s"%(time_stamp,str_para)
+        #print "%s\t%s"%(time_stamp,str_para)
+
+        fh2 = open(filename,'a')
+        fh2.write("%s\t%s"%(time_stamp,str_para))
+        fh2.write('\n')
+        fh2.close()
