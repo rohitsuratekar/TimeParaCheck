@@ -1,5 +1,6 @@
 #Main code: December 2015
-
+#Other files:
+#1) TPC_analysis : for analysis after main code is run
 #Important Notes :
 #1) concentration sequence should alwasy be : pmpi, pi4p, pip2, dag, pmpa, erpa, cdpdag, erpi
 #2) parameter sequence shuld always be: plc, A, B, C, D, E, alpha, beta, gamma, delta, epsilon
