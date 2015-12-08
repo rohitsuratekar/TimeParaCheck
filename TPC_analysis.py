@@ -16,18 +16,8 @@ parameter_thr = 1
 plotarray = matrix
 #plotarray= plotarray[plotarray.recoverytime <10]
 #plotarray= plotarray[plotarray.A < parameter_thr]
-#plotarray= plotarray[plotarray.B < parameter_thr]
-#plotarray= plotarray[plotarray.C < parameter_thr]
-#plotarray= plotarray[plotarray.D < parameter_thr]
-#plotarray= plotarray[plotarray.E < parameter_thr]
-
 #Plotting
 #plt.hist(plotarray.A.values,alpha = 0.5, label = 'A')
-#plt.hist(plotarray.B.values,alpha = 0.5,label = 'B')
-#plt.hist(plotarray.C.values,alpha = 0.5,label = 'C')
-#plt.hist(plotarray.D.values,alpha = 0.5,label = 'D')
-#plt.hist(plotarray.E.values,alpha = 0.5,label = 'E')
-#plt.scatter(plotarray.B.values,plotarray.C.values)
 
 matrix2 = pd.read_csv('PLC_0_078_Time_Para.txt',header=None, sep="\t")
 matrix2.columns=column_labels

@@ -61,7 +61,6 @@ for i in itertools.product(tset.A_range, tset.B_range, tset.C_range, tset.D_rang
         str_conversion = [ float(round(elem,3)) for elem in final_list ]
         str_para = '\t'.join(str(k1) for k1 in str_conversion)
 
-        #print "%s\t%s"%(time_stamp,str_para)
 
         fh2 = open(filename,'a')
         fh2.write("%s\t%s"%(time_stamp,str_para))
